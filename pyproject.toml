@@ -1,0 +1,40 @@
+[project]
+name = "genetic-page-crawler"
+version = "1.0.0"
+description = "A powerful web crawling and company information extraction service powered by Agno AI Agents"
+requires-python = ">=3.10"
+dependencies = [
+    "agno>=1.5.8",
+    "streamlit>=1.29.0",
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.2",
+    "openai>=1.35.0",
+    "pydantic>=2.5.0",
+    "validators>=0.22.0",
+    "lxml>=4.9.3",
+    "aiohttp>=3.9.1",
+    "nest-asyncio>=1.5.8",
+    "plotly>=5.17.0",
+    "pandas>=2.1.4",
+    "python-dotenv>=1.0.0",
+    "azure-ai-inference>=1.0.0b9",
+    "pywebview>=5.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+]
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+ 

@@ -1,0 +1,490 @@
+﻿#;Industry;;Sub-Industry;;Solution Area;
+1;Aerospace;1;3PL;2;3D-Design;3
+2;Agriculture;1;AAA Games;2;3D-Modeling;3
+3;Architecture;1;Acceleration Programs;2;3D-Printing;3
+4;Art;1;Accelerator;2;Accessibility;3
+5;Automotive;1;Access Management;2;Ad-Tech;3
+6;Aviation;1;Accommodation;2;Advertising;3
+7;Beauty;1;Accounting;2;Advisory;3
+8;Biotechnology;1;Accounting and Taxes;2;Agency;3
+9;Building;1;Activity Pad;2;Aggregator;3
+10;Chemistry;1;Additives;2;Agri-Tech;3
+11;Consumer & Goods;1;Advanced Materials;2;Analytical Services;3
+12;E-Commerce;1;Adventure;2;Analytics;3
+13;Education;1;Advertising & Marketing;2;API;3
+14;Energy;1;Affiliate Marketing;2;AR/VR;3
+15;Entertainment;1;After Sales Services;2;Artificial Intelligence;3
+16;Finance;1;Agile Management;2;Artificial Intelligence as a Service ( AIaaS);3
+17;FMCG;1;Agile Manufacturing;2;Assessment;3
+18;Gaming;1;Air Conditioning;2;Assistive-Tech;3
+19;Government;1;Aircraft;2;Audio-Tech;3
+20;Healthcare;1;Algae;2;Augmented Reality;3
+21;Human Resources;1;Alternative Medicine;2;Auto-Tech;3
+22;Information Technology;1;Animal Health;2;Automation;3
+23;Insurance ;1;Animation;2;Autonomous;3
+24;Legal;1;Anodization Services;2;Aviation-Tech;3
+25;Logistics;1;Anti Money Laundering ( AML );2;BaaS (Banking as a Service);3
+26;Manufacturing;1;Antivirus;2;Beauty-Tech;3
+27;Marketing;1;Apparel;2;Big Data;3
+28;Media;1;Appliances;2;Bio-Tech;3
+29;Mobile;1;Application Builder;2;Business Intelligence;3
+30;Oil;1;Application Development;2;Clean-Tech;3
+31;Other;1;Application Marketing;2;Climate-Tech;3
+32;Productivity;1;Aqua Culture;2;Cloud-Tech;3
+33;Property;1;Aquaculture;2;Comparison;3
+34;Retail;1;Aquarium;2;Construction-Tech;3
+35;Security;1;Arcade Gaming;2;Consulting;3
+36;Service;1;Aromatherapy;2;Corporate;3
+37;Social;1;Assembly;2;Data;3
+38;Sports;1;Asset Management;2;Data Analytics;3
+39;Telecommunications;1;Assistance;2;Data-Tech;3
+40;Textile;1;Astrology;2;Deep-Tech;3
+41;Tourism;1;ATM Services;2;Design-Tech;3
+42;;;Auction;2;Desktop app;3
+43;;;Audio Production;2;Edu-Tech;3
+44;;;Audio Streaming;2;Electronics;3
+45;;;Audit Advisory;2;Energy-Tech;3
+46;;;Autonomous Delivery Robot;2;Enterprise;3
+47;;;Autonomous Vehicles;2;Fin-Tech;3
+48;;;Avionics;2;Food-Tech;3
+49;;;Baby Care;2;Game-Tech;3
+50;;;Baby Toddler;2;Generative AI;3
+51;;;Banking;2;Green-Tech;3
+52;;;Barcode Systems;2;Hardware;3
+53;;;Battery;2;Health-Tech;3
+54;;;Battery Monitoring System;2;HoReCa;3
+55;;;Beauty & Cosmetics;2;Hr-Tech;3
+56;;;Betting;2;IaaS;3
+57;;;Beverages;2;Image Processing;3
+58;;;Billing/Invoicing;2;Image Recognition;3
+59;;;Biochemicals;2;Industry 4.0;3
+60;;;Biocomposite;2;Insur-Tech;3
+61;;;Biodegradable;2;Internet of Things;3
+62;;;Bioelectronic;2;Legal-Tech;3
+63;;;Bioengineering;2;Machine Learning;3
+64;;;Bioinformatics;2;Manufacturing-Tech;3
+65;;;Biology;2;Mar-Tech;3
+66;;;Biomaterials;2;Marine-Tech;3
+67;;;Biomedical;2;Marketplace;3
+68;;;Biometrics;2;Metaverse;3
+69;;;Blockchain;2;Mining-Tech;3
+70;;;Blog;2;Mixed Reality;3
+71;;;Book;2;Mobility;3
+72;;;Brand Management;2;NGOs;3
+73;;;Brand Strategy;2;Non-Profit;3
+74;;;Branding;2;NPOs;3
+75;;;Broadcasting;2;On Demand;3
+76;;;Building Information Modeling;2;PaaS;3
+77;;;Building Materials;2;Platform;3
+78;;;Business Advisory;2;Predictive Analytics;3
+79;;;Business Compliance;2;Prop-Tech;3
+80;;;Business Consultancy;2;Reg-Tech;3
+81;;;Business Development;2;Retail-Tech;3
+82;;;Business Management;2;RFID;3
+83;;;Business Planning / Continuity;2;Robotics;3
+84;;;Business Process Management (BPM);2;SaaS;3
+85;;;Business Process Outsourcing (BPO);2;Sharing Economy;3
+86;;;Cables;2;SME;3
+87;;;Call Center Management;2;Sustainability;3
+88;;;Campaign Management;2;Tracking;3
+89;;;Campervan Renting Platform;2;Unmanned Vehicles;3
+90;;;Capital Markets;2;Virtual Reality;3
+91;;;Car pooling sharing;2;Wallet;3
+92;;;Car Rental;2;Water-Tech;3
+93;;;Car Sharing;2;Wearables;3
+94;;;Carbon;2;;
+95;;;Carbon Credits;2;;
+96;;;Carbon Management Platform;2;;
+97;;;Carbon Offset;2;;
+98;;;Career;2;;
+99;;;Caring;2;;
+100;;;Casual Games;2;;
+101;;;CCTV;2;;
+102;;;Certification;2;;
+103;;;CFO Services;2;;
+104;;;Chatbot;2;;
+105;;;Chemicals;2;;
+106;;;Cinema;2;;
+107;;;Classifieds;2;;
+108;;;Cleaning;2;;
+109;;;Clinical Information System;2;;
+110;;;Clinical Research;2;;
+111;;;Cloud Computing;2;;
+112;;;Cloud Security;2;;
+113;;;Cloud Services;2;;
+114;;;Co-working;2;;
+115;;;Coding;2;;
+116;;;Collaboration Tool;2;;
+117;;;Communication Platform;2;;
+118;;;Community Platform;2;;
+119;;;Compliance;2;;
+120;;;Composite;2;;
+121;;;Computer Aided Design (CAD);2;;
+122;;;Computer Aided Engineering (CAE);2;;
+123;;;Conservative fashion;2;;
+124;;;Construction;2;;
+125;;;Consumer Electronics;2;;
+126;;;Consumer Goods;2;;
+127;;;Consumer Insights;2;;
+128;;;Consumer Pakaged Goods ( CPG );2;;
+129;;;Consumer Services;2;;
+130;;;Content;2;;
+131;;;Content & Web Management;2;;
+132;;;Content Creation;2;;
+133;;;Content Management;2;;
+134;;;Content Marketing;2;;
+135;;;Contracting;2;;
+136;;;Conversational AI;2;;
+137;;;Corporate Collaboration Tool;2;;
+138;;;Corporate Communication Tool;2;;
+139;;;Corporate Finance;2;;
+140;;;Corporate Innovation;2;;
+141;;;Cosmetics;2;;
+142;;;Creative Services;2;;
+143;;;Credit Scoring;2;;
+144;;;CRM;2;;
+145;;;Crowdfunding;2;;
+146;;;Crowdsourcing;2;;
+147;;;Crypto Projects;2;;
+148;;;Cryptocurrency;2;;
+149;;;Custom Development;2;;
+150;;;Customer Engagement;2;;
+151;;;Customer Experience;2;;
+152;;;Customer Loyalty;2;;
+153;;;Customer Service & Support;2;;
+154;;;Customization;2;;
+155;;;Cybersecurity;2;;
+156;;;Dairy Products;2;;
+157;;;Data Enrichment;2;;
+158;;;Data Governance;2;;
+159;;;Data Infrastructure;2;;
+160;;;Data Integration;2;;
+161;;;Data Management;2;;
+162;;;Data Management and Acquisition;2;;
+163;;;Data Mining;2;;
+164;;;Data Protection;2;;
+165;;;Data Recovery;2;;
+166;;;Data Science;2;;
+167;;;Data Security;2;;
+168;;;Data Services;2;;
+169;;;Database Management System;2;;
+170;;;Datacenter;2;;
+171;;;Dating;2;;
+172;;;Debt Management;2;;
+173;;;Decentralization;2;;
+174;;;Decentralization Finance (DeFi);2;;
+175;;;Decoration;2;;
+176;;;Defence;2;;
+177;;;Defense and intelligence;2;;
+178;;;Delivery Optimization;2;;
+179;;;Delivery Services;2;;
+180;;;Dental Care;2;;
+181;;;Dental Services;2;;
+182;;;Design Services;2;;
+183;;;Desktop-app;2;;
+184;;;Developer Tools;2;;
+185;;;Development and Testing;2;;
+186;;;DevOps;2;;
+187;;;Digital Ad Optimization;2;;
+188;;;Digital Advertising;2;;
+189;;;Digital Collection Management;2;;
+190;;;Digital Forensics;2;;
+191;;;Digital games design;2;;
+192;;;Digital Marketing;2;;
+193;;;Digital Menu;2;;
+194;;;Digital Parking Assistance;2;;
+195;;;Digital Pedometer;2;;
+196;;;Digital Printing;2;;
+197;;;Digital Showroom Solution;2;;
+198;;;Digital Signage;2;;
+199;;;Digital Streaming;2;;
+200;;;Digital Therapeutics;2;;
+201;;;Digital Wallet;2;;
+202;;;Disaster Management;2;;
+203;;;Discord Integrations;2;;
+204;;;Distributed Ledger Technology (DLT);2;;
+205;;;Document Automation;2;;
+206;;;Document Management;2;;
+207;;;Document Validation;2;;
+208;;;Drone;2;;
+209;;;Drop Shipping;2;;
+210;;;E-Bike;2;;
+211;;;E-Invoice;2;;
+212;;;E-Learning;2;;
+213;;;E-Signature;2;;
+214;;;E-Sports;2;;
+215;;;E-Transformation;2;;
+216;;;Ecommerce Enabler;2;;
+217;;;Electric Vehicle;2;;
+218;;;Electric Vehicle Charging;2;;
+219;;;Electricity;2;;
+220;;;Electronics Manufacturing Services (EMS);2;;
+221;;;Embedded Systems;2;;
+222;;;Energy Contacting;2;;
+223;;;Energy Distribution;2;;
+224;;;Energy Efficiency;2;;
+225;;;Energy Management;2;;
+226;;;Engineering;2;;
+227;;;Engineering & Scientific;2;;
+228;;;Engineering Innovative Product Development;2;;
+229;;;Entrepreneurship;2;;
+230;;;Environment Energy;2;;
+231;;;Environment Services;2;;
+232;;;ERP;2;;
+233;;;ERP & Process Management;2;;
+234;;;ESG;2;;
+235;;;EV Charging Station Map;2;;
+236;;;Event;2;;
+237;;;Event Experience;2;;
+238;;;Event Management & Meeting Planning;2;;
+239;;;Expense Management;2;;
+240;;;Facility Management;2;;
+241;;;Factoring;2;;
+242;;;Farming;2;;
+243;;;Fashion;2;;
+244;;;Feedback Analysis;2;;
+245;;;Feedback Management;2;;
+246;;;Fertilizers;2;;
+247;;;Field/Sales;2;;
+248;;;Filtration;2;;
+249;;;Financial Reporting;2;;
+250;;;Fitness;2;;
+251;;;Flash Sales;2;;
+252;;;Fleet Management;2;;
+253;;;Fleet Tracking;2;;
+254;;;Flower Delivery;2;;
+255;;;Food;2;;
+256;;;Food & Beverages;2;;
+257;;;Food Delivery;2;;
+258;;;Forex;2;;
+259;;;Franchising;2;;
+260;;;Freelance;2;;
+261;;;Freelance Management;2;;
+262;;;Freight;2;;
+263;;;Fresh Delivery;2;;
+264;;;Fuel Management;2;;
+265;;;Fullfillment;2;;
+266;;;Funding;2;;
+267;;;Fundraising;2;;
+268;;;Game Design;2;;
+269;;;Game Studio;2;;
+270;;;Gamification;2;;
+271;;;Genetics;2;;
+272;;;Geographic Information Systems;2;;
+273;;;GeoSpatial;2;;
+274;;;Gift;2;;
+275;;;GPS;2;;
+276;;;Graphic Design;2;;
+277;;;GRC (Governance, Risk, and Compliance);2;;
+278;;;Green;2;;
+279;;;Green Energy;2;;
+280;;;Grocery Delivery;2;;
+281;;;Group Buying;2;;
+282;;;Growth Marketing;2;;
+283;;;Healthcare and Life Sciences;2;;
+284;;;Home Decor;2;;
+285;;;Home Services;2;;
+286;;;Hospital Information System;2;;
+287;;;Hospitality;2;;
+288;;;Hosting;2;;
+289;;;Hotel;2;;
+290;;;Hotel Management;2;;
+291;;;Hotel Marketing;2;;
+292;;;HVAC;2;;
+293;;;Hydrogen-Powered Scooter;2;;
+294;;;Hypercasual games;2;;
+295;;;Identity Management;2;;
+296;;;Identity Verification;2;;
+297;;;Immigration;2;;
+298;;;Incubation;2;;
+299;;;Incubator;2;;
+300;;;Influencer;2;;
+301;;;Influencer Marketing;2;;
+302;;;Information and Communication Technology;2;;
+303;;;Information Management;2;;
+304;;;Information Retrieval and Extraction;2;;
+305;;;Integration Services;2;;
+306;;;Intellectual Property;2;;
+307;;;Internation Shipping;2;;
+308;;;Internet Service Provider;2;;
+309;;;Investment;2;;
+310;;;Investment Management;2;;
+311;;;Investment Platform;2;;
+312;;;Investor;2;;
+313;;;Jewellery;2;;
+314;;;Knowledge Management;2;;
+315;;;Laboratory;2;;
+316;;;Language Learning;2;;
+317;;;Language Services;2;;
+318;;;Languages & Compilers;2;;
+319;;;Last Mile Delivery;2;;
+320;;;Law;2;;
+321;;;Lead Generation;2;;
+322;;;Learning Management Systems (LMS);2;;
+323;;;Legal Services;2;;
+324;;;Life Cycle Management;2;;
+325;;;Life Sciences;2;;
+326;;;Lithium Ion Battery;2;;
+327;;;Live Streaming;2;;
+328;;;Local Services;2;;
+329;;;Location;2;;
+330;;;Location Analytics;2;;
+331;;;Logistics & Inventory Management;2;;
+332;;;Low-Code Platform;2;;
+333;;;Maintanance Services;2;;
+334;;;Managed Services;2;;
+335;;;Management;2;;
+336;;;Market Research;2;;
+337;;;Marketing and Campaign Automation;2;;
+338;;;Meal Delivery;2;;
+339;;;Mechanics;2;;
+340;;;Mechatronics;2;;
+341;;;Media and entertainment;2;;
+342;;;Media and Publishing;2;;
+343;;;Medical Services;2;;
+344;;;Merger and Acquisitions;2;;
+345;;;MES (Manufacturing Execution System);2;;
+346;;;Meteorology;2;;
+347;;;Microbiology;2;;
+348;;;Midcore Games;2;;
+349;;;Military;2;;
+350;;;Mobile Application;2;;
+351;;;Mobile Application Development;2;;
+352;;;Mobile Charging Station;2;;
+353;;;Mobile Games;2;;
+354;;;Monitoring;2;;
+355;;;Music;2;;
+356;;;Nanotechnology;2;;
+357;;;Network Infrastructure;2;;
+358;;;Network Management;2;;
+359;;;Network Resource Sharing and Virtualization;2;;
+360;;;Network Services;2;;
+361;;;Networking;2;;
+362;;;News;2;;
+363;;;NFC;2;;
+364;;;NFT;2;;
+365;;;NLP;2;;
+366;;;No Code Development Platform;2;;
+367;;;Nonprofit;2;;
+368;;;Novel Methanol Production Technique;2;;
+369;;;OCR;2;;
+370;;;Office Automation;2;;
+371;;;Omnichannel;2;;
+372;;;On Demand Mobile;2;;
+373;;;Online Payment Solution;2;;
+374;;;Operation Research Optimization;2;;
+375;;;Operational Excellence;2;;
+376;;;Parking Management System;2;;
+377;;;Pattern Design Tool;2;;
+378;;;Payment;2;;
+379;;;Payment Processing;2;;
+380;;;Personalization;2;;
+381;;;Pet;2;;
+382;;;Pharmacy;2;;
+383;;;Philanthropy;2;;
+384;;;Point of Sale (POS);2;;
+385;;;Portal;2;;
+386;;;Post Sales;2;;
+387;;;Predictive Maintenance;2;;
+388;;;Print;2;;
+389;;;Private Equity;2;;
+390;;;Procurement & Purchasing;2;;
+391;;;Professional Time Accounting;2;;
+392;;;Psychology;2;;
+393;;;Public Relations;2;;
+394;;;Public Safety and Justice;2;;
+395;;;Publishing Software;2;;
+396;;;Q&A;2;;
+397;;;Quality Management;2;;
+398;;;Quantum Computing;2;;
+399;;;Railway;2;;
+400;;;Real Estate;2;;
+401;;;Recruitment;2;;
+402;;;Recycling;2;;
+403;;;Remote Collaboration;2;;
+404;;;Remote Psychological Counseling;2;;
+405;;;Remote Service;2;;
+406;;;Renewable Energy;2;;
+407;;;Reporting;2;;
+408;;;Research and Development;2;;
+409;;;Restaurant;2;;
+410;;;Reverse Engineering;2;;
+411;;;Review;2;;
+412;;;Reward Systems;2;;
+413;;;RFID;2;;
+414;;;Ride Sharing;2;;
+415;;;Risk Analysis;2;;
+416;;;Risk Assessment;2;;
+417;;;Risk Management;2;;
+418;;;Robotics;2;;
+419;;;Route Optimization;2;;
+420;;;RPA (Robotic Process Automation);2;;
+421;;;Safety;2;;
+422;;;Sales and Marketing;2;;
+423;;;Scientific Research and Development;2;;
+424;;;Search;2;;
+425;;;Search Engine;2;;
+426;;;Security Software;2;;
+427;;;Semantic;2;;
+428;;;SEO Services;2;;
+429;;;Smart Bottle;2;;
+430;;;Smart Cane;2;;
+431;;;Smart City;2;;
+432;;;Smart Clothing;2;;
+433;;;Smart Energy Management;2;;
+434;;;Smart Home;2;;
+435;;;Smart Manufacturing;2;;
+436;;;Smart Outdoor Lighting;2;;
+437;;;Smart Tripod;2;;
+438;;;Social App;2;;
+439;;;Social Good;2;;
+440;;;Social Media;2;;
+441;;;Social Networking;2;;
+442;;;Software Design;2;;
+443;;;Software Development;2;;
+444;;;Software Testing;2;;
+445;;;Solar Energy;2;;
+446;;;SQL;2;;
+447;;;Startup Ecosystem;2;;
+448;;;Startup Studio;2;;
+449;;;Strategy Games;2;;
+450;;;Supply Chain and Storage;2;;
+451;;;Supply Chain Management;2;;
+452;;;Support;2;;
+453;;;Talent Management;2;;
+454;;;Taxi Hailing;2;;
+455;;;Telemonitoring Platform;2;;
+456;;;Thermal Interface Materials;2;;
+457;;;Time Management;2;;
+458;;;Tokenization;2;;
+459;;;Tracking;2;;
+460;;;Trading Solutions;2;;
+461;;;Training;2;;
+462;;;Transportation;2;;
+463;;;Travel;2;;
+464;;;UI Design;2;;
+465;;;UI/UX Design;2;;
+466;;;Unity3D Game Engine;2;;
+467;;;User Experience;2;;
+468;;;UX Design;2;;
+469;;;Venture Builder;2;;
+470;;;Venture Capital;2;;
+471;;;Venture Studio;2;;
+472;;;Vertical Commerce House;2;;
+473;;;Video;2;;
+474;;;Video Games;2;;
+475;;;Virus Protection Software;2;;
+476;;;Visual;2;;
+477;;;Warehouse;2;;
+478;;;Waste Management;2;;
+479;;;Wearables;2;;
+480;;;Weather;2;;
+481;;;Web 3.0;2;;
+482;;;Web Development;2;;
+483;;;Web Management;2;;
+484;;;Web Services;2;;
+485;;;Web Technologies;2;;
+486;;;Wedding;2;;
+487;;;Well-being;2;;
+488;;;Wellness;2;;
+489;;;Women Health;2;;
