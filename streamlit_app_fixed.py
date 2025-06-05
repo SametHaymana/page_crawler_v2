@@ -530,7 +530,7 @@ def main():
                     st.session_state.search_results = st.session_state.service.search_companies(search_query)
                 else:
                     st.session_state.search_results = st.session_state.service.get_all_companies()
-                
+        
         # Show all companies by default
         if 'search_results' not in st.session_state:
             st.session_state.search_results = st.session_state.service.get_all_companies()

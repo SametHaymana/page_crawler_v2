@@ -7,6 +7,7 @@ from datetime import datetime
 
 from web_crawler import WebCrawler
 from company_extractor_agent import CompanyExtractorAgent
+from database import CrawlerDatabase
 from config import Config
 
 logging.basicConfig(level=logging.INFO)
@@ -18,6 +19,7 @@ class PageCrawlerService:
     def __init__(self):
         self.crawler = WebCrawler()
         self.extractor_agent = CompanyExtractorAgent()
+        self.database = CrawlerDatabase()
         self.processing_history: List[Dict] = []
     
     def validate_url(self, url: str) -> bool:
@@ -123,6 +125,13 @@ class PageCrawlerService:
         finally:
             # Calculate processing time
             result['processing_time'] = round(time.time() - start_time, 2)
+            
+            # Save to database
+            try:
+                self.database.save_processing_result(result)
+                logger.info(f"Saved processing result to database for {url}")
+            except Exception as db_error:
+                logger.error(f"Failed to save to database: {str(db_error)}")
             
             # Add to processing history
             self.processing_history.append(result)
@@ -248,4 +257,34 @@ class PageCrawlerService:
             
         except Exception as e:
             logger.error(f"Error exporting results: {str(e)}")
-            raise 
+            raise
+    
+    # Database access methods
+    
+    def get_all_companies(self) -> List[Dict[str, Any]]:
+        """Get all companies from database"""
+        return self.database.get_all_companies()
+    
+    def get_company_details(self, company_id: str) -> Optional[Dict[str, Any]]:
+        """Get detailed company information from database"""
+        return self.database.get_company_details(company_id)
+    
+    def search_companies(self, query: str) -> List[Dict[str, Any]]:
+        """Search companies in database"""
+        return self.database.search_companies(query)
+    
+    def get_database_statistics(self) -> Dict[str, Any]:
+        """Get database statistics"""
+        return self.database.get_statistics()
+    
+    def get_database_processing_results(self, limit: int = 100) -> List[Dict[str, Any]]:
+        """Get processing results from database"""
+        return self.database.get_processing_results(limit)
+    
+    def delete_company(self, company_id: str) -> bool:
+        """Delete a company from database"""
+        return self.database.delete_company(company_id)
+    
+    def export_database_data(self) -> Dict[str, Any]:
+        """Export all database data"""
+        return self.database.export_data() 

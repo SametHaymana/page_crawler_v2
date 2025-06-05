@@ -33,6 +33,9 @@ class Config:
     AZURE_OPENAI_API_VERSION = get_config_value("AZURE_OPENAI_API_VERSION", "2025-01-01-preview")
     AZURE_OPENAI_DEPLOYMENT_NAME = get_config_value("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4o")
     
+    # Authentication Configuration
+    APP_PASSWORD = get_config_value("APP_PASSWORD", "GeneticCrawler2024!")
+    
     # Crawler Configuration
     MAX_PAGES_PER_DOMAIN = 10
     CRAWLER_DELAY = 1  # seconds between requests
