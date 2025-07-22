@@ -248,7 +248,7 @@ def main():
     max_pages = st.sidebar.slider("Max Pages per Website", 1, 20, Config.MAX_PAGES_PER_DOMAIN)
     
     # Main content tabs
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["🔍 Single Website", "📋 Batch Processing", "📊 Results & History", "🗄️ Database", "📥 Export"])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["🔍 Single Website", "📋 Batch Processing", "📊 Results & History", "🗄️ Database", "📥 Export", "⚙️ Agent Settings"])
     
     with tab1:
         st.header("Analyze Single Website")
@@ -764,6 +764,75 @@ def main():
                 
         else:
             st.info("No results to export. Process some websites first!")
+    
+    with tab6:
+        st.header("⚙️ Agent Settings")
+        
+        st.markdown("""
+        <div class="info-card">
+            <h4>🤖 AI Agent Configuration</h4>
+            <p>Customize the extraction requirements for the AI agent that analyzes company websites.</p>
+            <p>Changes will be applied immediately and will affect all future website analyses.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Get current extraction requirements
+        current_requirements = st.session_state.service.extractor_agent.get_extraction_requirements()
+        
+        # Create a text area for editing the requirements
+        new_requirements = st.text_area(
+            "Extraction Requirements",
+            value=current_requirements,
+            height=400,
+            help="Edit the extraction requirements for the AI agent. These instructions guide what information is extracted from websites."
+        )
+        
+        col1, col2 = st.columns([1, 1])
+        
+        with col1:
+            if st.button("💾 Save Changes", type="primary"):
+                try:
+                    # Update the extraction requirements
+                    st.session_state.service.extractor_agent.update_extraction_requirements(new_requirements)
+                    st.success("✅ Extraction requirements updated successfully!")
+                except Exception as e:
+                    st.error(f"❌ Failed to update extraction requirements: {str(e)}")
+        
+        with col2:
+            if st.button("🔄 Reset to Default"):
+                try:
+                    # Reset to default requirements
+                    st.session_state.service.extractor_agent.reset_to_default_requirements()
+                    st.experimental_rerun()  # Rerun the app to show updated requirements
+                except Exception as e:
+                    st.error(f"❌ Failed to reset extraction requirements: {str(e)}")
+        
+        # Information about the agent
+        with st.expander("ℹ️ About the AI Agent"):
+            st.markdown("""
+            ### Company Extractor Agent
+            
+            This AI agent is powered by Azure OpenAI and is designed to extract structured company information from website content.
+            
+            The agent analyzes the text content crawled from company websites and extracts details such as:
+            
+            - Company information (name, description, industry, etc.)
+            - Services offered
+            - Products and their details
+            - Business model and customer information
+            
+            ### Extraction Requirements
+            
+            The extraction requirements define what information the agent should look for and how it should structure the output.
+            Modifying these requirements allows you to customize the extraction process to focus on specific types of information.
+            
+            ### Best Practices
+            
+            - Keep the structure consistent with the original format
+            - Be specific about what information to extract
+            - Include clear instructions for the AI agent
+            - Test changes on a few websites before running batch processing
+            """)
     
     # Footer
     st.markdown("---")

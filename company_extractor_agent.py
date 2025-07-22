@@ -16,13 +16,7 @@ class CompanyExtractorAgent:
     
     def __init__(self):
         self.sector_validator = SectorValidator()
-        self.agent = self._create_agent()
-    
-    def _create_agent(self) -> Agent:
-        """Create and configure the Agno agent for company data extraction"""
-        
-        # Define the comprehensive extraction requirements
-        extraction_requirements = """
+        self._default_extraction_requirements = """
         Extract comprehensive company information organized into three main sections:
 
         1. COMPANY INFORMATION:
@@ -72,6 +66,41 @@ class CompanyExtractorAgent:
         - Available Countries, Integrations, Partnerships
         """
         
+        self._extraction_requirements = self._default_extraction_requirements
+        self.agent = self._create_agent()
+    
+    def get_extraction_requirements(self) -> str:
+        """Get the current extraction requirements"""
+        return self._extraction_requirements
+    
+    def update_extraction_requirements(self, new_requirements: str) -> None:
+        """
+        Update the extraction requirements and recreate the agent
+        
+        Args:
+            new_requirements: New extraction requirements text
+        """
+        if not new_requirements or not new_requirements.strip():
+            logger.warning("Empty requirements provided, using default requirements")
+            self._extraction_requirements = self._default_extraction_requirements
+        else:
+            logger.info("Updating extraction requirements")
+            self._extraction_requirements = new_requirements
+        
+        # Recreate the agent with the updated requirements
+        self.agent = self._create_agent()
+        logger.info("Agent recreated with updated extraction requirements")
+    
+    def reset_to_default_requirements(self) -> None:
+        """Reset extraction requirements to default and recreate the agent"""
+        logger.info("Resetting extraction requirements to default")
+        self._extraction_requirements = self._default_extraction_requirements
+        self.agent = self._create_agent()
+        logger.info("Agent reset to default extraction requirements")
+    
+    def _create_agent(self) -> Agent:
+        """Create and configure the Agno agent for company data extraction"""
+        
         agent = Agent(
             model=AzureOpenAI(
                 id=Config.AZURE_OPENAI_DEPLOYMENT_NAME,
@@ -101,7 +130,7 @@ class CompanyExtractorAgent:
                 Your task is to analyze this content thoroughly and extract structured information
                 following these detailed requirements:
 
-                {extraction_requirements}
+                {self._extraction_requirements}
 
                 IMPORTANT ANALYSIS GUIDELINES:
                 1. READ ALL provided website content carefully - content from multiple pages will be provided
