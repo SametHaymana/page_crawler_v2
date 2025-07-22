@@ -335,6 +335,17 @@ def main():
             placeholder="https://example1.com\nhttps://example2.com\nhttps://example3.com"
         )
         
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            use_parallel = st.checkbox("Use Parallel Processing", value=Config.PARALLEL_PROCESSING_ENABLED, 
+                                     help=f"Process up to {Config.MAX_PARALLEL_PROCESSES} websites simultaneously")
+        
+        with col2:
+            batch_size = st.slider("Batch Size", 1, 30, Config.BATCH_SIZE, 
+                                 help="Number of websites to process in each batch",
+                                 key="batch_processing_batch_size")
+        
         if st.button("🚀 Process Batch", type="primary"):
             if urls_text.strip():
                 urls = [url.strip() for url in urls_text.strip().split('\n') if url.strip()]
@@ -353,7 +364,8 @@ def main():
                                 st.session_state.service.batch_process_websites(
                                     urls=urls,
                                     max_pages_per_site=max_pages,
-                                    progress_callback=batch_progress_callback
+                                    progress_callback=batch_progress_callback,
+                                    parallel=use_parallel
                                 )
                             )
                             
@@ -364,13 +376,16 @@ def main():
                             successful = sum(1 for r in results if r['success'])
                             failed = len(results) - successful
                             
-                            col1, col2, col3 = st.columns(3)
+                            col1, col2, col3, col4 = st.columns(4)
                             with col1:
                                 st.metric("Total Processed", len(results))
                             with col2:
                                 st.metric("Successful", successful)
                             with col3:
                                 st.metric("Failed", failed)
+                            with col4:
+                                avg_time = sum(r['processing_time'] for r in results) / max(len(results), 1)
+                                st.metric("Avg. Processing Time", f"{avg_time:.2f}s")
                             
                             if successful > 0:
                                 st.success(f"✅ Successfully processed {successful} out of {len(results)} websites")
@@ -776,36 +791,119 @@ def main():
         </div>
         """, unsafe_allow_html=True)
         
-        # Get current extraction requirements
-        current_requirements = st.session_state.service.extractor_agent.get_extraction_requirements()
+        # Create tabs for different settings
+        settings_tab1, settings_tab2 = st.tabs(["Extraction Requirements", "Parallel Processing"])
         
-        # Create a text area for editing the requirements
-        new_requirements = st.text_area(
-            "Extraction Requirements",
-            value=current_requirements,
-            height=400,
-            help="Edit the extraction requirements for the AI agent. These instructions guide what information is extracted from websites."
-        )
+        with settings_tab1:
+            # Get current extraction requirements
+            current_requirements = st.session_state.service.extractor_agent.get_extraction_requirements()
+            
+            # Create a text area for editing the requirements
+            new_requirements = st.text_area(
+                "Extraction Requirements",
+                value=current_requirements,
+                height=400,
+                help="Edit the extraction requirements for the AI agent. These instructions guide what information is extracted from websites."
+            )
+            
+            col1, col2 = st.columns([1, 1])
+            
+            with col1:
+                if st.button("💾 Save Changes", type="primary"):
+                    try:
+                        # Update the extraction requirements
+                        st.session_state.service.extractor_agent.update_extraction_requirements(new_requirements)
+                        st.success("✅ Extraction requirements updated successfully!")
+                    except Exception as e:
+                        st.error(f"❌ Failed to update extraction requirements: {str(e)}")
+            
+            with col2:
+                if st.button("🔄 Reset to Default"):
+                    try:
+                        # Reset to default requirements
+                        st.session_state.service.extractor_agent.reset_to_default_requirements()
+                        st.experimental_rerun()  # Rerun the app to show updated requirements
+                    except Exception as e:
+                        st.error(f"❌ Failed to reset extraction requirements: {str(e)}")
         
-        col1, col2 = st.columns([1, 1])
-        
-        with col1:
-            if st.button("💾 Save Changes", type="primary"):
-                try:
-                    # Update the extraction requirements
-                    st.session_state.service.extractor_agent.update_extraction_requirements(new_requirements)
-                    st.success("✅ Extraction requirements updated successfully!")
-                except Exception as e:
-                    st.error(f"❌ Failed to update extraction requirements: {str(e)}")
-        
-        with col2:
-            if st.button("🔄 Reset to Default"):
-                try:
-                    # Reset to default requirements
-                    st.session_state.service.extractor_agent.reset_to_default_requirements()
-                    st.experimental_rerun()  # Rerun the app to show updated requirements
-                except Exception as e:
-                    st.error(f"❌ Failed to reset extraction requirements: {str(e)}")
+        with settings_tab2:
+            st.subheader("Parallel Processing Configuration")
+            
+            st.markdown("""
+            <div class="info-card">
+                <p>Configure parallel processing settings for batch website analysis. 
+                Parallel processing allows multiple websites to be analyzed simultaneously, 
+                significantly improving throughput.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Create columns for settings
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Enable/disable parallel processing
+                enable_parallel = st.checkbox(
+                    "Enable Parallel Processing", 
+                    value=Config.PARALLEL_PROCESSING_ENABLED,
+                    help="Enable or disable parallel processing for batch website analysis"
+                )
+                
+                # Max parallel processes
+                max_parallel = st.slider(
+                    "Maximum Parallel Processes", 
+                    min_value=1, 
+                    max_value=50, 
+                    value=Config.MAX_PARALLEL_PROCESSES,
+                    help="Maximum number of websites that can be processed simultaneously"
+                )
+            
+            with col2:
+                # Batch size
+                batch_size = st.slider(
+                    "Batch Size", 
+                    min_value=1, 
+                    max_value=30, 
+                    value=Config.BATCH_SIZE,
+                    help="Number of websites to process in each batch",
+                    key="agent_settings_batch_size"
+                )
+                
+                # Apply button
+                if st.button("Apply Parallel Settings", type="primary"):
+                    try:
+                        # Update Config values (this is temporary until app restart)
+                        Config.PARALLEL_PROCESSING_ENABLED = enable_parallel
+                        Config.MAX_PARALLEL_PROCESSES = max_parallel
+                        Config.BATCH_SIZE = batch_size
+                        
+                        # Reinitialize agent pool if needed
+                        if hasattr(st.session_state.service, '_agent_pool'):
+                            st.session_state.service._agent_pool = None
+                        
+                        st.success("✅ Parallel processing settings updated!")
+                    except Exception as e:
+                        st.error(f"❌ Failed to update settings: {str(e)}")
+            
+            # Information about parallel processing
+            with st.expander("ℹ️ About Parallel Processing"):
+                st.markdown("""
+                ### Parallel Processing
+                
+                Parallel processing allows the system to analyze multiple websites simultaneously, 
+                significantly improving throughput when processing large batches of websites.
+                
+                ### Key Settings:
+                
+                - **Enable Parallel Processing**: Turn parallel processing on or off
+                - **Maximum Parallel Processes**: The maximum number of websites that can be processed simultaneously
+                - **Batch Size**: Number of websites to process in each batch
+                
+                ### Best Practices:
+                
+                - For best performance, set Maximum Parallel Processes to match your Azure OpenAI service capacity
+                - Processing too many websites in parallel may result in API rate limiting
+                - Start with a smaller number and gradually increase based on performance
+                """)
         
         # Information about the agent
         with st.expander("ℹ️ About the AI Agent"):

@@ -1,7 +1,7 @@
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.models.azure import AzureOpenAI
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import json
 from textwrap import dedent
 from config import Config
@@ -97,6 +97,20 @@ class CompanyExtractorAgent:
         self._extraction_requirements = self._default_extraction_requirements
         self.agent = self._create_agent()
         logger.info("Agent reset to default extraction requirements")
+    
+    @classmethod
+    def create_agent_pool(cls, pool_size: int) -> List['CompanyExtractorAgent']:
+        """
+        Create a pool of CompanyExtractorAgent instances for parallel processing
+        
+        Args:
+            pool_size: Number of agent instances to create
+            
+        Returns:
+            List of CompanyExtractorAgent instances
+        """
+        logger.info(f"Creating a pool of {pool_size} CompanyExtractorAgent instances")
+        return [cls() for _ in range(pool_size)]
     
     def _create_agent(self) -> Agent:
         """Create and configure the Agno agent for company data extraction"""

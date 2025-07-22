@@ -41,6 +41,11 @@ class Config:
     CRAWLER_DELAY = 1  # seconds between requests
     MAX_CONTENT_LENGTH = 50000  # characters
     
+    # Parallel Processing Configuration
+    MAX_PARALLEL_PROCESSES = 30  # Maximum number of parallel agent processes
+    BATCH_SIZE = 10  # Number of websites to process in a single batch
+    PARALLEL_PROCESSING_ENABLED = True  # Enable/disable parallel processing
+    
     # Supported languages for content extraction
     SUPPORTED_LANGUAGES = ["en", "tr"]
     
