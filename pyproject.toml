@@ -2,7 +2,7 @@
 name = "page-crawler-v2"
 version = "0.1.0"
 description = "A Streamlit app for crawling web pages and extracting company info."
-requires-python = "~=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "agno>=1.7.0",
     "streamlit>=1.30.0",
@@ -25,6 +25,5 @@ dependencies = [
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-py-modules = ["auth", "company_extractor_agent", "config", "database", "main_app", "page_crawler_service", "sector_search_tool", "sector_validator", "web_crawler"]
+[tool.setuptools.packages.find]
+where = ["src"]
