@@ -7,6 +7,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import nest_asyncio
 from typing import List, Dict, Any
+from functools import lru_cache
 
 from page_crawler_service import PageCrawlerService
 from config import Config
@@ -14,6 +15,12 @@ from auth import is_authenticated, show_login_form, show_logout_option
 
 # Enable nested asyncio loops for Streamlit
 nest_asyncio.apply()
+
+# --- Caching ---
+@lru_cache(maxsize=None)
+def get_page_crawler_service():
+    """Cached factory for PageCrawlerService"""
+    return PageCrawlerService()
 
 # Configure Streamlit page
 st.set_page_config(
@@ -73,7 +80,7 @@ if not is_authenticated():
 
 # Initialize session state (only if authenticated)
 if 'service' not in st.session_state:
-    st.session_state.service = PageCrawlerService()
+    st.session_state.service = get_page_crawler_service()
 if 'processing_results' not in st.session_state:
     st.session_state.processing_results = []
 if 'current_progress' not in st.session_state:
