@@ -15,6 +15,7 @@ def check_password(entered_password: str) -> bool:
     """Check if entered password matches the configured password"""
     return entered_password == Config.APP_PASSWORD
 
+
 def logout():
     """Logout the user"""
     st.session_state.authenticated = False
