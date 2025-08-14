@@ -63,3 +63,6 @@ DESKTOP_APP_README.md
 # Backup files
 *.bak
 *.backup 
+
+
+crawler_database.db

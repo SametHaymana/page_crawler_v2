@@ -6,6 +6,8 @@ import logging
 from datetime import datetime
 import concurrent.futures
 from functools import partial
+import os
+from asyncio import Semaphore
 
 from web_crawler import WebCrawler
 from company_extractor_agent import CompanyExtractorAgent
@@ -24,6 +26,7 @@ class PageCrawlerService:
         self.database = CrawlerDatabase()
         self.processing_history: List[Dict] = []
         self._agent_pool = None
+        self._shutdown_event = asyncio.Event()
     
     def validate_url(self, url: str) -> bool:
         """Validate if the provided URL is valid"""
@@ -184,9 +187,16 @@ class PageCrawlerService:
     
     def clear_history(self):
         """Clear the processing history"""
-        self.processing_history.clear()
+        if self.processing_history:
+            self.processing_history.clear()
+        self._shutdown_event.clear()
         logger.info("Processing history cleared")
     
+    async def shutdown(self):
+        """Signal shutdown to stop ongoing tasks gracefully"""
+        logger.info("Shutdown signal received. Stopping batch processing...")
+        self._shutdown_event.set()
+
     def _initialize_agent_pool(self, pool_size: int = None) -> List[CompanyExtractorAgent]:
         """Initialize or get the agent pool"""
         if self._agent_pool is None:
@@ -194,6 +204,33 @@ class PageCrawlerService:
             self._agent_pool = CompanyExtractorAgent.create_agent_pool(pool_size)
             logger.info(f"Initialized agent pool with {len(self._agent_pool)} agents")
         return self._agent_pool
+    
+    async def _process_website_wrapper(
+        self, 
+        url: str, 
+        max_pages: int, 
+        agent: CompanyExtractorAgent, 
+        semaphore: Semaphore
+    ) -> Dict[str, Any]:
+        """Wrapper to process a single website with semaphore for concurrency control"""
+        async with semaphore:
+            if self._shutdown_event.is_set():
+                logger.warning(f"Skipping {url} due to shutdown signal")
+                return {
+                    'success': False,
+                    'url': url,
+                    'error': 'Processing cancelled due to shutdown'
+                }
+            return await self.process_company_website(
+                url=url,
+                max_pages=max_pages,
+                extractor_agent=agent
+            )
+
+    def _get_optimal_worker_count(self) -> int:
+        """Determine optimal number of parallel workers"""
+        cpu_count = os.cpu_count() or 1
+        return min(Config.MAX_PARALLEL_PROCESSES, cpu_count * 5)
     
     def _process_website_sync(self, url: str, max_pages: int, agent: CompanyExtractorAgent) -> Dict[str, Any]:
         """
@@ -238,55 +275,38 @@ class PageCrawlerService:
                 'crawling_summary': None
             }
     
-    def _process_batch_parallel(self, urls: List[str], max_pages: int) -> List[Dict[str, Any]]:
+    async def _process_batch_parallel(self, urls: List[str], max_pages: int, progress_callback=None) -> List[Dict[str, Any]]:
         """
-        Process a batch of websites in parallel using thread pool
-        
-        Args:
-            urls: List of website URLs to process
-            max_pages: Maximum pages to crawl per website
-            
-        Returns:
-            List of processing results
+        Process a batch of websites in parallel using asyncio.gather for better performance
         """
-        # Initialize agent pool if needed
         agents = self._initialize_agent_pool()
+        worker_count = self._get_optimal_worker_count()
+        semaphore = Semaphore(worker_count)
         
-        # Create a thread pool
+        tasks = []
+        for i, url in enumerate(urls):
+            agent = agents[i % len(agents)]
+            tasks.append(
+                self._process_website_wrapper(url, max_pages, agent, semaphore)
+            )
+        
         results = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=len(agents)) as executor:
-            # Submit tasks
-            future_to_url = {}
-            for i, url in enumerate(urls):
-                # Use modulo to cycle through available agents
-                agent = agents[i % len(agents)]
-                future = executor.submit(
-                    self._process_website_sync,
-                    url=url,
-                    max_pages=max_pages,
-                    agent=agent
-                )
-                future_to_url[future] = url
+        for i, task in enumerate(asyncio.as_completed(tasks)):
+            try:
+                result = await task
+                results.append(result)
+                
+                if progress_callback:
+                    progress = int(20 + (80 * len(results) / len(urls)))
+                    progress_callback(f"Completed {len(results)}/{len(urls)}: {result['url']}", progress)
             
-            # Collect results as they complete
-            for future in concurrent.futures.as_completed(future_to_url):
-                url = future_to_url[future]
-                try:
-                    result = future.result()
-                    results.append(result)
-                    logger.info(f"Completed processing {url} in parallel mode")
-                except Exception as e:
-                    logger.error(f"Exception processing {url} in parallel mode: {str(e)}")
-                    results.append({
-                        'success': False,
-                        'url': url,
-                        'timestamp': datetime.now().isoformat(),
-                        'processing_time': 0,
-                        'pages_crawled': 0,
-                        'company_data': None,
-                        'error': f"Parallel processing error: {str(e)}",
-                        'crawling_summary': None
-                    })
+            except Exception as e:
+                logger.error(f"Exception in parallel processing task: {str(e)}")
+                results.append({
+                    'success': False,
+                    'url': urls[i],
+                    'error': f"Unhandled exception in parallel task: {str(e)}"
+                })
         
         return results
     
@@ -322,30 +342,14 @@ class PageCrawlerService:
         if use_parallel and total_urls > 1:
             logger.info(f"Using parallel processing for {total_urls} websites")
             if progress_callback:
-                progress_callback(f"Using parallel processing with {Config.MAX_PARALLEL_PROCESSES} agents", 10)
+                worker_count = self._get_optimal_worker_count()
+                progress_callback(f"Using parallel processing with up to {worker_count} workers", 10)
             
-            # Process in batches to avoid overwhelming the system
-            batch_size = min(Config.BATCH_SIZE, total_urls)
-            total_batches = (total_urls + batch_size - 1) // batch_size  # Ceiling division
-            
-            processed_count = 0
-            for batch_index in range(total_batches):
-                start_idx = batch_index * batch_size
-                end_idx = min(start_idx + batch_size, total_urls)
-                batch_urls = urls[start_idx:end_idx]
-                
-                if progress_callback:
-                    batch_progress = int(20 + (70 * batch_index / total_batches))
-                    progress_callback(f"Processing batch {batch_index+1}/{total_batches} ({len(batch_urls)} websites)", batch_progress)
-                
-                # Process this batch in parallel
-                batch_results = self._process_batch_parallel(batch_urls, max_pages)
-                results.extend(batch_results)
-                
-                processed_count += len(batch_urls)
-                if progress_callback:
-                    batch_complete_progress = int(20 + (70 * processed_count / total_urls))
-                    progress_callback(f"Completed {processed_count}/{total_urls} websites", batch_complete_progress)
+            try:
+                results = await self._process_batch_parallel(urls, max_pages, progress_callback)
+            except asyncio.CancelledError:
+                logger.warning("Batch processing was cancelled.")
+                results = []
         else:
             # Sequential processing
             logger.info(f"Using sequential processing for {total_urls} websites")
