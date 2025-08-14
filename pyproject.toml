@@ -24,3 +24,7 @@ dependencies = [
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["auth", "company_extractor_agent", "config", "database", "main_app", "page_crawler_service", "sector_search_tool", "sector_validator", "web_crawler"]
