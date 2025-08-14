@@ -34,7 +34,7 @@ class Config:
     AZURE_OPENAI_DEPLOYMENT_NAME = get_config_value("AZURE_OPENAI_DEPLOYMENT_NAME", "Llama-4-Scout-17B-16E-Instruct")
     
     # Authentication Configuration
-    APP_PASSWORD = get_config_value("APP_PASSWORD", "GeneticCrawler2024!")
+    APP_PASSWORD = get_config_value("APP_PASSWORD", "")
     
     # Crawler Configuration
     MAX_PAGES_PER_DOMAIN = 10

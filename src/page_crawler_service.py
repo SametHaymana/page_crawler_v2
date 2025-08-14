@@ -150,10 +150,6 @@ class PageCrawlerService:
             # Keep only last 100 processed items in history
             if len(self.processing_history) > 100:
                 self.processing_history = self.processing_history[-100:]
-            
-            # Close the crawler session
-            if hasattr(crawler, 'close_session') and crawler.session:
-                await crawler.close_session()
         
         return result
     

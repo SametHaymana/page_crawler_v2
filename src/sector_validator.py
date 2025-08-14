@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class SectorValidator:
     """Validator for industry, sub-industry, and solution area categories"""
     
-    def __init__(self, csv_path: str = "sectors.csv"):
+    def __init__(self, csv_path: str = "public/sectors.csv"):
         self.csv_path = csv_path
         self.industries: Set[str] = set()
         self.sub_industries: Set[str] = set()

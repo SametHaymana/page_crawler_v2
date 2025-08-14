@@ -11,3 +11,6 @@ nest-asyncio==1.5.8
 plotly==5.17.0
 pandas==2.1.4
 python-dotenv==1.0.0 
+uvicorn
+validators
+playwright 

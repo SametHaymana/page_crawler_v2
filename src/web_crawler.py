@@ -8,6 +8,7 @@ import time
 import re
 from config import Config
 import logging
+from playwright.async_api import async_playwright
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -16,31 +17,24 @@ class WebCrawler:
     """Advanced web crawler for collecting company information from websites"""
     
     def __init__(self):
-        self.session = None
         self.visited_urls: Set[str] = set()
         self.collected_content: List[Dict] = []
-        
+        self.playwright = None
+        self.browser = None
+    
     async def create_session(self):
-        """Create aiohttp session with proper headers"""
-        headers = {
-            'User-Agent': Config.USER_AGENT,
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate',
-            'Connection': 'keep-alive',
-        }
-        connector = aiohttp.TCPConnector(limit=10, limit_per_host=5)
-        timeout = aiohttp.ClientTimeout(total=Config.REQUEST_TIMEOUT)
-        self.session = aiohttp.ClientSession(
-            headers=headers, 
-            connector=connector, 
-            timeout=timeout
-        )
+        """Create Playwright session and launch browser"""
+        if not self.playwright:
+            self.playwright = await async_playwright().start()
+        if not self.browser:
+            self.browser = await self.playwright.chromium.launch(headless=True)
     
     async def close_session(self):
-        """Close aiohttp session"""
-        if self.session:
-            await self.session.close()
+        """Close Playwright session and browser"""
+        if self.browser:
+            await self.browser.close()
+        if self.playwright:
+            await self.playwright.stop()
     
     def normalize_url(self, url: str) -> str:
         """Normalize URL by removing fragments and query parameters"""
@@ -66,8 +60,7 @@ class WebCrawler:
             
         # Skip non-relevant pages
         skip_patterns = [
-            r'/blog/', r'/news/', r'/press/', r'/careers/', 
-            r'/jobs/', r'/support/', r'/help/', r'/faq/',
+            r'/careers/', r'/jobs/', r'/support/', r'/help/', r'/faq/',
             r'/privacy/', r'/terms/', r'/legal/', r'/sitemap/',
             r'/search/', r'/login/', r'/register/', r'/account/',
             r'\.pdf$', r'\.doc$', r'\.jpg$', r'\.png$', r'\.gif$'
@@ -84,36 +77,43 @@ class WebCrawler:
         return True
     
     async def fetch_page(self, url: str) -> Optional[Dict]:
-        """Fetch and parse a single page"""
+        """Fetch and parse a single page using Playwright"""
         try:
-            if not self.session:
+            if not self.browser:
                 await self.create_session()
-                
-            async with self.session.get(url) as response:
-                if response.status == 200:
-                    content = await response.text()
-                    soup = BeautifulSoup(content, 'html.parser')
-                    
-                    # Extract text content
-                    text_content = self.extract_text_content(soup)
-                    
-                    # Extract links for further crawling
-                    links = self.extract_links(soup, url)
-                    
-                    return {
-                        'url': url,
-                        'title': soup.title.string if soup.title else '',
-                        'content': text_content,
-                        'links': links,
-                        'meta_description': self.extract_meta_description(soup),
-                        'headings': self.extract_headings(soup)
-                    }
-                else:
-                    logger.warning(f"Failed to fetch {url}: Status {response.status}")
-                    return None
-                    
+            
+            page = await self.browser.new_page(
+                user_agent=Config.USER_AGENT,
+                java_script_enabled=True
+            )
+            
+            await page.goto(url, wait_until="domcontentloaded", timeout=Config.REQUEST_TIMEOUT * 1000)
+            
+            # Wait for dynamic content to load
+            await page.wait_for_timeout(3000)
+            
+            content = await page.content()
+            soup = BeautifulSoup(content, 'html.parser')
+            
+            links = await self.extract_links(page, url)
+            text_content = self.extract_text_content(soup)
+            
+            result = {
+                'url': url,
+                'title': await page.title(),
+                'content': text_content,
+                'links': links,
+                'meta_description': self.extract_meta_description(soup),
+                'headings': self.extract_headings(soup)
+            }
+            
+            await page.close()
+            return result
+            
         except Exception as e:
-            logger.error(f"Error fetching {url}: {str(e)}")
+            logger.error(f"Error fetching {url} with Playwright: {str(e)}")
+            if 'page' in locals() and not page.is_closed():
+                await page.close()
             return None
     
     def extract_text_content(self, soup: BeautifulSoup) -> str:
@@ -136,11 +136,14 @@ class WebCrawler:
         
         return text
     
-    def extract_links(self, soup: BeautifulSoup, base_url: str) -> List[str]:
-        """Extract all links from the page"""
+    async def extract_links(self, page, base_url: str) -> List[str]:
+        """Extract all links from the page using Playwright"""
         links = []
-        for link in soup.find_all('a', href=True):
-            href = link['href']
+        
+        # Use Playwright to get all href attributes
+        hrefs = await page.eval_on_selector_all('a', 'nodes => nodes.map(n => n.href)')
+        
+        for href in hrefs:
             full_url = urljoin(base_url, href)
             normalized_url = self.normalize_url(full_url)
             if normalized_url and normalized_url.startswith(('http://', 'https://')):
