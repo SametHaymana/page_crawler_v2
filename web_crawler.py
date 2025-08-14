@@ -61,6 +61,7 @@ class WebCrawler:
         
         # Must be same domain
         if parsed.netloc.lower() != base_domain.lower():
+            logger.debug(f"Rejecting {url}: different domain ({parsed.netloc} vs {base_domain})")
             return False
             
         # Skip non-relevant pages
@@ -74,16 +75,13 @@ class WebCrawler:
         
         for pattern in skip_patterns:
             if re.search(pattern, url, re.IGNORECASE):
+                logger.debug(f"Rejecting {url}: matches skip pattern {pattern}")
                 return False
         
-        # Prioritize company-relevant pages
-        priority_patterns = [
-            r'/about', r'/company', r'/team', r'/contact',
-            r'/products', r'/services', r'/solutions',
-            r'/customers', r'/case-studies', r'/portfolio'
-        ]
-        
-        return any(re.search(pattern, url, re.IGNORECASE) for pattern in priority_patterns) or parsed.path in ['/', '']
+        # Accept any page on the same domain that doesn't match skip patterns
+        # This allows crawling more pages while still avoiding irrelevant content
+        logger.debug(f"Accepting {url}: valid company page")
+        return True
     
     async def fetch_page(self, url: str) -> Optional[Dict]:
         """Fetch and parse a single page"""
@@ -147,7 +145,10 @@ class WebCrawler:
             normalized_url = self.normalize_url(full_url)
             if normalized_url and normalized_url.startswith(('http://', 'https://')):
                 links.append(normalized_url)
-        return list(set(links))  # Remove duplicates
+        
+        unique_links = list(set(links))  # Remove duplicates
+        logger.debug(f"Extracted {len(unique_links)} unique links from {base_url}")
+        return unique_links
     
     def extract_meta_description(self, soup: BeautifulSoup) -> str:
         """Extract meta description"""
@@ -186,9 +187,11 @@ class WebCrawler:
                 current_url = urls_to_visit.pop(0)
                 
                 if current_url in self.visited_urls:
+                    logger.debug(f"Skipping already visited: {current_url}")
                     continue
                 
                 if not self.is_valid_company_page(current_url, base_domain):
+                    logger.info(f"Skipping invalid page: {current_url}")
                     continue
                 
                 logger.info(f"Crawling: {current_url}")
@@ -199,11 +202,18 @@ class WebCrawler:
                     self.collected_content.append(page_data)
                     
                     # Add new links to crawl
+                    new_links_added = 0
                     for link in page_data['links']:
                         if (link not in self.visited_urls and 
                             link not in urls_to_visit and
                             self.is_valid_company_page(link, base_domain)):
                             urls_to_visit.append(link)
+                            new_links_added += 1
+                    
+                    logger.info(f"Found {len(page_data['links'])} links, added {new_links_added} new URLs to crawl queue")
+                    logger.info(f"Queue size: {len(urls_to_visit)}, Visited: {len(self.visited_urls)}")
+                else:
+                    logger.warning(f"Failed to fetch page: {current_url}")
                 
                 # Add delay between requests
                 await asyncio.sleep(Config.CRAWLER_DELAY)

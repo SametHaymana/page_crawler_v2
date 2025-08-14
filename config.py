@@ -31,7 +31,7 @@ class Config:
     AZURE_OPENAI_API_KEY = get_config_value("AZURE_OPENAI_API_KEY")
     AZURE_OPENAI_ENDPOINT = get_config_value("AZURE_OPENAI_ENDPOINT", "https://testsamet.cognitiveservices.azure.com")
     AZURE_OPENAI_API_VERSION = get_config_value("AZURE_OPENAI_API_VERSION", "2025-01-01-preview")
-    AZURE_OPENAI_DEPLOYMENT_NAME = get_config_value("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4o")
+    AZURE_OPENAI_DEPLOYMENT_NAME = get_config_value("AZURE_OPENAI_DEPLOYMENT_NAME", "Llama-4-Scout-17B-16E-Instruct")
     
     # Authentication Configuration
     APP_PASSWORD = get_config_value("APP_PASSWORD", "GeneticCrawler2024!")

@@ -171,11 +171,21 @@ class CompanyExtractorAgent:
                 4. DO NOT make up sector names or use sectors not returned by the tools
 
                 CRITICAL OUTPUT REQUIREMENTS:
-                - Your response MUST be valid JSON only
-                - No additional text, explanations, or comments outside the JSON
+                - Your response MUST be valid JSON only - no additional text, explanations, or comments
                 - Use null for any information that cannot be found
                 - Ensure all strings are properly escaped for JSON format
                 - Double-check that all JSON brackets and syntax are correct
+                - Do not include any HTML tags, script tags, or special characters in the JSON
+                - Keep all string values simple and clean - avoid complex formatting
+                - If a field contains multiple values, separate them with commas in a single string
+                - Never use backticks, angle brackets, or other special characters in string values
+                
+                JSON STRUCTURE VALIDATION:
+                - All property names must be in double quotes
+                - All string values must be in double quotes
+                - Use null (without quotes) for missing values
+                - Ensure proper nesting of objects and arrays
+                - No trailing commas after the last item in objects or arrays
                 
                 Remember: The quality of extraction depends on thorough analysis of ALL provided content.
                 Be meticulous and comprehensive in your analysis.
@@ -292,9 +302,13 @@ class CompanyExtractorAgent:
                 response_text = response_text[:-3]
             response_text = response_text.strip()
             
-            # Parse JSON
+            # Parse JSON with improved error handling
             try:
-                company_data = json.loads(response_text)
+                # First, try to clean the response text more thoroughly
+                cleaned_text = self._clean_json_response(response_text)
+                
+                # Try to parse the cleaned JSON
+                company_data = json.loads(cleaned_text)
                 
                 # Apply sector validation and corrections
                 validated_data = self.sector_validator.validate_company_sectors(company_data)
@@ -311,14 +325,128 @@ class CompanyExtractorAgent:
                 
                 logger.info("Successfully extracted and validated company information")
                 return validated_data
+                
             except json.JSONDecodeError as e:
                 logger.error(f"JSON parsing error: {e}")
-                logger.error(f"Response text: {response_text}")
-                return None
+                logger.error(f"Original response text: {response_text}")
+                
+                # Try to fix common JSON issues
+                try:
+                    fixed_text = self._fix_json_syntax(response_text)
+                    company_data = json.loads(fixed_text)
+                    
+                    # Apply sector validation and corrections
+                    validated_data = self.sector_validator.validate_company_sectors(company_data)
+                    
+                    logger.info("Successfully extracted company information after JSON fixes")
+                    return validated_data
+                    
+                except (json.JSONDecodeError, Exception) as fix_error:
+                    logger.error(f"Failed to fix JSON syntax: {fix_error}")
+                    logger.error(f"Attempted fix: {fixed_text}")
+                    
+                    # Create a fallback structure with basic information
+                    logger.warning("Creating fallback company data structure due to JSON parsing failure")
+                    fallback_data = self._create_fallback_structure()
+                    return fallback_data
                 
         except Exception as e:
             logger.error(f"Error during company information extraction: {str(e)}")
             return None
+    
+    def _clean_json_response(self, response_text: str) -> str:
+        """Clean the JSON response text to remove common formatting issues"""
+        # Remove markdown code blocks
+        if response_text.startswith('```json'):
+            response_text = response_text[7:]
+        elif response_text.startswith('```'):
+            response_text = response_text[3:]
+        
+        if response_text.endswith('```'):
+            response_text = response_text[:-3]
+        
+        # Remove any leading/trailing whitespace
+        response_text = response_text.strip()
+        
+        # Remove any explanatory text before or after JSON
+        lines = response_text.split('\n')
+        json_lines = []
+        in_json = False
+        
+        for line in lines:
+            line = line.strip()
+            if line.startswith('{') or line.startswith('['):
+                in_json = True
+            if in_json:
+                json_lines.append(line)
+            if line.endswith('}') or line.endswith(']'):
+                in_json = False
+        
+        return '\n'.join(json_lines)
+    
+    def _fix_json_syntax(self, json_text: str) -> str:
+        """Attempt to fix common JSON syntax errors"""
+        import re
+        
+        # Fix common issues
+        fixed_text = json_text
+        
+        # Remove any script tags or HTML that might have been included
+        fixed_text = re.sub(r'<script[^>]*>.*?</script>', '', fixed_text, flags=re.DOTALL)
+        fixed_text = re.sub(r'<[^>]*>', '', fixed_text)
+        
+        # Fix malformed field names with spaces or special characters
+        fixed_text = re.sub(r'"([^"]*)\s+([^"]*)"\s*:', r'"\1_\2":', fixed_text)
+        
+        # Fix missing quotes around property names
+        fixed_text = re.sub(r'([{,])\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r'\1"\2":', fixed_text)
+        
+        # Fix trailing commas
+        fixed_text = re.sub(r',(\s*[}\]])', r'\1', fixed_text)
+        
+        # Fix null values that might be malformed
+        fixed_text = re.sub(r':\s*null\s*([,}])', r': null\1', fixed_text)
+        
+        # Fix string values that might be malformed
+        fixed_text = re.sub(r':\s*"([^"]*)"\s*([,}])', r': "\1"\2', fixed_text)
+        
+        # Fix any remaining malformed characters
+        fixed_text = re.sub(r'[^\x20-\x7E\n\r\t]', '', fixed_text)
+        
+        # Fix specific issues from the error we saw
+        fixed_text = re.sub(r'`([^`]*)`', r'"\1"', fixed_text)  # Replace backticks with quotes
+        fixed_text = re.sub(r'\[\[([^\]]*)\]\]', r'"\1"', fixed_text)  # Replace double brackets
+        fixed_text = re.sub(r'PARTNERS\s*/\*([^*]*)\*/', r'"\1"', fixed_text)  # Fix comment-like structures
+        
+        return fixed_text
+    
+    def _create_fallback_structure(self) -> Dict[str, Any]:
+        """Create a fallback company data structure when JSON parsing fails"""
+        return {
+            "company_info": {
+                "logo": None,
+                "name": "Unknown Company",
+                "headline": None,
+                "description": "Company information extraction failed due to technical issues.",
+                "company_type": None,
+                "service_or_product": None,
+                "video_url": None,
+                "headquarter": None,
+                "city": None,
+                "employee_count": None,
+                "founded_year": None,
+                "business_model": None,
+                "women_founded": None,
+                "industry": None,
+                "sub_industry": None,
+                "solution_area": None,
+                "tags": None,
+                "active_customers": None,
+                "available_countries": None
+            },
+            "services": [],
+            "products": []
+        }
     
     def validate_extraction_result(self, result: Dict[Any, Any]) -> bool:
         """
