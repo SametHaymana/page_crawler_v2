@@ -146,7 +146,7 @@ class CrawlerDatabase:
                 result.get('processing_time', 0),
                 result.get('error', None),
                 json.dumps(result.get('crawling_summary', {})),
-                json.dumps(result.get('company_data', {}).get('_validation', {})),
+                json.dumps((result.get('company_data') or {}).get('_validation', {})),
                 result.get('timestamp', datetime.now().isoformat())
             ))
             
